@@ -1,0 +1,43 @@
+#PMMPでマルチをするときのチーム分け用プラグイン
+name: TeamPlugin
+main: team\team
+version: 1.0.0
+api: 3.0.0-ALPHA11
+
+commands:
+ teamop:
+  description: "チームを新たに作ったり削除したりします"
+
+ team:
+  description: "チームに関する情報を確認できます"
+  
+ join:
+  description: "チームに参加します"
+  
+ leave:
+  description: "チームから抜けます"
+   
+permissions:
+ team:
+  default: OP
+  description: "Allows making and deleting teams"
+  children:
+   team.command:
+    default: true
+    description: "Allows making and deleting teams"
+
+ join:
+  default: true
+  description: "Allows joining teams"
+  children:
+   join.command:
+    default: true
+    description: "Allows joining teams"
+
+  leave:
+  default: true
+  description: "Allows leaving teams"
+  children:
+   leave.command:
+    default: true
+    description: "Allows leaving teams"
