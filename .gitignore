@@ -3,3 +3,5 @@ teamlist.yml
 players/*
 teams/*
 .vscode/settings.json
+#一時的に無視
+src/teamcolor/command/TeamCommand.php

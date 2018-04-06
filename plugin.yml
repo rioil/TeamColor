@@ -1,13 +1,10 @@
 #PMMPでマルチをするときのチーム分け用プラグイン
-name: TeamPlugin
-main: team\team
+name: TeamColor
+main: teamcolor\Main
 version: 1.0.0
 api: 3.0.0-ALPHA11
 
 commands:
- teamop:
-  description: "チームを新たに作ったり削除したりします"
-
  team:
   description: "チームに関する情報を確認できます"
   
@@ -19,7 +16,7 @@ commands:
    
 permissions:
  team:
-  default: OP
+  default: true
   description: "Allows making and deleting teams"
   children:
    team.command:
