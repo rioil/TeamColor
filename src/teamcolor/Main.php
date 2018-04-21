@@ -31,7 +31,7 @@ class Main extends PluginBase implements Listener{
         }
         //チームのリストを作成
         $this->teamlist = new Config($this->getDataFolder() . 'teamlist.yml', Config::YAML);
-        if(!$this->teamlist->exists('red' || 'blue')){
+        if(!($this->teamlist->exists('red')) || !($this->teamlist->exists('red'))){
             $this->teamlist->set('red','1');
             $this->teamlist->set('blue','1');
             $this->teamlist->save();
@@ -166,7 +166,7 @@ class Main extends PluginBase implements Listener{
                     $this->current_config->set('team','');
                     $this->current_config->save();
                     //プレイヤーのネームタグを白色にする
-                    $sender->setNameTag("§f$sender->getName()");
+                    $sender->setNameTag('§f' . $sender->getName());
                     //完了メッセージ
                     $sender->sendMessage('チーム' . $this->current_team . 'から抜けました');
                     $this->getLogger()->info($sender->getName() . 'がチーム' . $this->current_team . 'から抜けました');
