@@ -26,17 +26,19 @@ class Main extends PluginBase implements Listener{
         if(!file_exists($this->getDataFolder())){
             @mkdir($this->getDataFolder());
         }
+        //プレイヤーファイルの保存場所作成
         if(!file_exists($this->getDataFolder() . 'players')){
             @mkdir($this->getDataFolder() . 'players');
         }
-        //チームのリストを作成
-        $this->teamlist = new Config($this->getDataFolder() . 'teamlist.yml', Config::YAML);
-        if(!($this->teamlist->exists('red')) || !($this->teamlist->exists('red'))){
-            $this->teamlist->set('red','1');
-            $this->teamlist->set('blue','1');
-            $this->teamlist->save();
-            $this->getLogger()->info('チームリストが作成されチームblueとredが有効になりました');
+        //チームファイルの保存場所作成
+        if(!file_exists($this->getDataFolder() . 'teams')){
+            @mkdir($this->getDataFolder() . 'teams');
         }
+        //それぞれのチーム管理ファイルを作成
+        $this->red = new Config($this->getDataFolder() . 'teams/red.yml', Config::YAML, array('member' => 0));
+        $this->blue = new Config($this->getDataFolder() . 'teams/blue.yml', Config::YAML, array('member' => 0));
+        $this->yellow = new Config($this->getDataFolder() . 'teams/yellow.yml', Config::YAML, array('member' => 0));
+        $this->green = new Config($this->getDataFolder() . 'teams/green.yml', Config::YAML, array('member' => 0));
         $this->getLogger()->info('初期化完了');
     }
     //pluginが有効になった時に実行
@@ -86,13 +88,12 @@ class Main extends PluginBase implements Listener{
     
             case 'team':
 
-                $exists_team = array($this->teamlist->getAll(true));
-                $sender->sendMessage('§3＝＝チーム一覧＝＝');
-                $team_array = $exists_team[0];
-                foreach($team_array as $teamname){
-                    $sender->sendMessage("§f$teamname");
-                }
-                $sender->sendMessage('§3＝＝＝＝＝＝＝＝＝');
+                $sender->sendMessage('§3＝チーム一覧＝');
+                $sender->sendMessage('§4red');
+                $sender->sendMessage('§1blue');
+                $sender->sendMessage('§6yellow');
+                $sender->sendMessage('§2green');           
+                $sender->sendMessage('§3＝＝＝＝＝＝＝');
 
             break;
 
@@ -101,7 +102,7 @@ class Main extends PluginBase implements Listener{
                 if(isset($args[0])){
                     $this->teamname = strtolower($args[0]);
                         //チームが存在しないとき
-                        if(!$this->teamlist->exists($this->teamname)){
+                        if(!($this->teamname == 'red' || 'blue' || 'yellow' || 'green')){
                             $sender->sendMessage('チーム：' . $this->teamname . 'は存在しません');
                             break;
                         }
@@ -123,23 +124,31 @@ class Main extends PluginBase implements Listener{
                     $this->current_config->set('team',$this->teamname);
                     $this->current_config->save();
 
-                    //チームごとの色の指定
+                    //チームごとの色の指定とチームファイルへの書き込み
                     switch($this->teamname){
 
                         case 'red' : 
                             $this->color = '§4';
+                            $this->red->set($sender->getName(),'0');
+                            $this->red->remove('member',(int)$this->red->get('member') + 1);
                         break;
 
                         case 'blue' : 
                             $this->color = '§1';
+                            $this->blue->set($sender->getName(),'0');
+                            $this->blue->remove('member',(int)$this->blue->get('member') + 1);
                         break;
 
                         case 'yellow' : 
                             $this->color = '§6';
+                            $this->yellow->set($sender->getName(),'0');
+                            $this->yellow->remove('member',(int)$this->yellow->get('member') + 1);
                         break;
 
                         case 'green' : 
                             $this->color = '§2';
+                            $this->green->set($sender->getName(),'0');
+                            $this->green->remove('member',(int)$this->green->get('member') + 1);
                         break;
 
                     }
@@ -161,8 +170,34 @@ class Main extends PluginBase implements Listener{
                 $this->send_player = $sender->getName();
                 //プレイヤーのコンフィグ準備
                 $this->current_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
+                //所属チームの確認
                 if($this->current_config->exists('team')){
                     $this->current_team = $this->current_config->get('team');
+
+                    //チームファイルから名前の削除
+                    switch($this->teamname){
+
+                        case 'red' : 
+                            $this->red->remove($sender->getName());
+                            $this->red->remove('member',(int)$this->red->get('member') - 1);
+                        break;
+
+                        case 'blue' : 
+                            $this->blue->remove($sender->getName());
+                            $this->blue->remove('member',(int)$this->blue->get('member') - 1);
+                        break;
+
+                        case 'yellow' : 
+                            $this->yellow->remove($sender->getName());
+                            $this->yellow->remove('member',(int)$this->yellow->get('member') - 1);
+                        break;
+
+                        case 'green' : 
+                            $this->green->remove($sender->getName());
+                            $this->green->remove('member',(int)$this->green->get('member') - 1);
+                        break;
+                    }
+
                     $this->current_config->set('team','');
                     $this->current_config->save();
                     //プレイヤーのネームタグを白色にする
