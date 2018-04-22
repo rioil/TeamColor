@@ -130,28 +130,28 @@ class Main extends PluginBase implements Listener{
                         case 'red' : 
                             $this->color = '§4';
                             $this->red->set($sender->getName(),'0');
-                            $this->red->remove('member',(int)$this->red->get('member') + 1);
+                            $this->red->set('member',(int)$this->red->get('member') + 1);
                             $this->red->save();
                         break;
 
                         case 'blue' : 
                             $this->color = '§1';
                             $this->blue->set($sender->getName(),'0');
-                            $this->blue->remove('member',(int)$this->blue->get('member') + 1);
+                            $this->blue->set('member',(int)$this->blue->get('member') + 1);
                             $this->blue->save();
                         break;
 
                         case 'yellow' : 
                             $this->color = '§6';
                             $this->yellow->set($sender->getName(),'0');
-                            $this->yellow->remove('member',(int)$this->yellow->get('member') + 1);
+                            $this->yellow->set('member',(int)$this->yellow->get('member') + 1);
                             $this->yellow->save();
                         break;
 
                         case 'green' : 
                             $this->color = '§2';
                             $this->green->set($sender->getName(),'0');
-                            $this->green->remove('member',(int)$this->green->get('member') + 1);
+                            $this->green->set('member',(int)$this->green->get('member') + 1);
                             $this->green->save();
                         break;
 
@@ -183,25 +183,25 @@ class Main extends PluginBase implements Listener{
 
                         case 'red' : 
                             $this->red->remove($sender->getName());
-                            $this->red->remove('member',(int)$this->red->get('member') - 1);
+                            $this->red->set('member',(int)$this->red->get('member') - 1);
                             $this->red->save();
                         break;
 
                         case 'blue' : 
                             $this->blue->remove($sender->getName());
-                            $this->blue->remove('member',(int)$this->blue->get('member') - 1);
+                            $this->blue->set('member',(int)$this->blue->get('member') - 1);
                             $this->blue->save();
                         break;
 
                         case 'yellow' : 
                             $this->yellow->remove($sender->getName());
-                            $this->yellow->remove('member',(int)$this->yellow->get('member') - 1);
+                            $this->yellow->set('member',(int)$this->yellow->get('member') - 1);
                             $this->yellow->save();
                         break;
 
                         case 'green' : 
                             $this->green->remove($sender->getName());
-                            $this->green->remove('member',(int)$this->green->get('member') - 1);
+                            $this->green->set('member',(int)$this->green->get('member') - 1);
                             $this->green->save();
                         break;
                     }
