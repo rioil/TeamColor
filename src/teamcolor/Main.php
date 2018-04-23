@@ -58,6 +58,7 @@ class Main extends PluginBase implements Listener{
         $new_player_config = new Config($this->getDataFolder() . 'players/' . $player_name . '.yml', Config::YAML, array('team' => ''));
         //チーム名の表示
         switch($new_player_config->get('team')){
+            
             case 'red' : 
                 $this->color = '§4';
             break;
@@ -107,7 +108,7 @@ class Main extends PluginBase implements Listener{
                             break;
                         }
                         //プレイヤーのコンフィグ準備
-                        $this->current_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
+                        $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
                 }
                 else{
                     $sender->sendMessage('§4チーム名を正しく指定してください');
@@ -115,47 +116,44 @@ class Main extends PluginBase implements Listener{
                 }
 
                 //今入っているチームを確認
-                if($this->current_config->get('team') !== $this->teamname){
+                if($this->player_config->get('team') !== $this->teamname){
                     //すでにチームに所属していればそのチームを抜けることを通知
-                    if($this->current_config->get('team') !== ''){
-                        $sender->sendMessage('チーム' . $this->current_config->get('team') . 'から抜けます');
+                    if($this->player_config->get('team') !== ''){
+                        $sender->sendMessage('チーム' . $this->player_config->get('team') . 'から抜けます');
                     }
                     //コンフィグに参加するチーム名をセット
-                    $this->current_config->set('team',$this->teamname);
-                    $this->current_config->save();
+                    $this->player_config->set('team',$this->teamname);
+                    $this->player_config->save();
 
-                    //チームごとの色の指定とチームファイルへの書き込み
+                    //チームのコンフィグファイルと色を指定
                     switch($this->teamname){
 
                         case 'red' : 
+                            $this->team_config = $this->red;  
                             $this->color = '§4';
-                            $this->red->set($sender->getName(),'0');
-                            $this->red->set('member',(int)$this->red->get('member') + 1);
-                            $this->red->save();
                         break;
 
                         case 'blue' : 
+                            $this->team_config = $this->blue;
                             $this->color = '§1';
-                            $this->blue->set($sender->getName(),'0');
-                            $this->blue->set('member',(int)$this->blue->get('member') + 1);
-                            $this->blue->save();
                         break;
 
                         case 'yellow' : 
+                            $this->team_config = $this->yellow;
                             $this->color = '§6';
-                            $this->yellow->set($sender->getName(),'0');
-                            $this->yellow->set('member',(int)$this->yellow->get('member') + 1);
-                            $this->yellow->save();
                         break;
 
                         case 'green' : 
+                            $this->team_config = $this->green;
                             $this->color = '§2';
-                            $this->green->set($sender->getName(),'0');
-                            $this->green->set('member',(int)$this->green->get('member') + 1);
-                            $this->green->save();
                         break;
 
                     }
+                    //コンフィグに書き込み
+                    $this->team_config->set($sender->getName(),'0');
+                    $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
+                    $this->team_config->save();
+
                     //プレイヤーのネームタグの色をチームカラーに変更
                     $sender->setNameTag($this->color . $sender->getName());
                     $sender->setNameTagVisible(true);
@@ -173,41 +171,37 @@ class Main extends PluginBase implements Listener{
 
                 $this->send_player = $sender->getName();
                 //プレイヤーのコンフィグ準備
-                $this->current_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
+                $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
                 //所属チームの確認
-                if($this->current_config->exists('team')){
-                    $this->current_team = $this->current_config->get('team');
+                if($this->player_config->exists('team')){
+                    $this->current_team = $this->player_config->get('team');
 
-                    //チームファイルから名前の削除
+                    //チームのコンフィグを指定
                     switch($this->teamname){
 
                         case 'red' : 
-                            $this->red->remove($sender->getName());
-                            $this->red->set('member',(int)$this->red->get('member') - 1);
-                            $this->red->save();
+                            $this->team_config = $this->red;
                         break;
 
                         case 'blue' : 
-                            $this->blue->remove($sender->getName());
-                            $this->blue->set('member',(int)$this->blue->get('member') - 1);
-                            $this->blue->save();
+                            $this->team_config = $this->blue;
                         break;
 
                         case 'yellow' : 
-                            $this->yellow->remove($sender->getName());
-                            $this->yellow->set('member',(int)$this->yellow->get('member') - 1);
-                            $this->yellow->save();
+                            $this->team_config = $this->yellow;
                         break;
 
                         case 'green' : 
-                            $this->green->remove($sender->getName());
-                            $this->green->set('member',(int)$this->green->get('member') - 1);
-                            $this->green->save();
+                            $this->team_config = $this->green;
                         break;
                     }
+                    //コンフィグに書き込み
+                    $this->team_config->remove($sender->getName());
+                    $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                    $this->team_config->save();
 
-                    $this->current_config->set('team','');
-                    $this->current_config->save();
+                    $this->player_config->set('team','');
+                    $this->player_config->save();
                     //プレイヤーのネームタグを白色にする
                     $sender->setNameTag('§f' . $sender->getName());
                     //完了メッセージ
