@@ -174,7 +174,7 @@ class Main extends PluginBase implements Listener{
                 $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
                 //所属チームの確認
                 if($this->player_config->exists('team')){
-                    $this->current_team = $this->player_config->get('team');
+                    $this->teamname = $this->player_config->get('team');
 
                     //チームのコンフィグを指定
                     switch($this->teamname){
