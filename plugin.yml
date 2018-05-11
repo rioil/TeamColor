@@ -6,35 +6,19 @@ api: 3.0.0-ALPHA12
 
 commands:
  team:
-  description: "チームに関する情報を確認できます"
+  description: 'チームに関する情報を確認できます'
   
  join:
-  description: "チームに参加します"
+  description: 'チームに参加します'
   
  leave:
-  description: "チームから抜けます"
+  description: 'チームから抜けます'
    
 permissions:
- team:
+ teamplugin.command:
   default: true
-  description: "Allows making and deleting teams"
+  description: 'Allows to join and leave teams, get information about team.'
   children:
-   team.command:
+   teamplugin.command:
     default: true
-    description: "Allows making and deleting teams"
-
- join:
-  default: true
-  description: "Allows joining teams"
-  children:
-   join.command:
-    default: true
-    description: "Allows joining teams"
-
-  leave:
-  default: true
-  description: "Allows leaving teams"
-  children:
-   leave.command:
-    default: true
-    description: "Allows leaving teams"
+    description: 'Allows to join and leave teams, get information about team.'
