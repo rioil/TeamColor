@@ -18,9 +18,12 @@ use pocketmine\event\player\PlayerJoinEvent;
 
 class Main extends PluginBase implements Listener{
 
-    public $teamlist;
+    public $red;
+    public $blue;
+    public $yellow;
+    public $green;
 
-  //plugin読み込み時に実行
+    //plugin読み込み時に実行
     public function onLoad(){
         //設定ファイル保存場所作成
         if(!file_exists($this->getDataFolder())){
@@ -35,10 +38,10 @@ class Main extends PluginBase implements Listener{
             @mkdir($this->getDataFolder() . 'teams');
         }
         //それぞれのチーム管理ファイルを作成
-        $this->red = new Config($this->getDataFolder() . 'teams/red.yml', Config::YAML, array('member' => 0));
-        $this->blue = new Config($this->getDataFolder() . 'teams/blue.yml', Config::YAML, array('member' => 0));
-        $this->yellow = new Config($this->getDataFolder() . 'teams/yellow.yml', Config::YAML, array('member' => 0));
-        $this->green = new Config($this->getDataFolder() . 'teams/green.yml', Config::YAML, array('member' => 0));
+        $red = new Config($this->getDataFolder() . 'teams/red.yml', Config::YAML, array('member' => 0));
+        $blue = new Config($this->getDataFolder() . 'teams/blue.yml', Config::YAML, array('member' => 0));
+        $yellow = new Config($this->getDataFolder() . 'teams/yellow.yml', Config::YAML, array('member' => 0));
+        $green = new Config($this->getDataFolder() . 'teams/green.yml', Config::YAML, array('member' => 0));
         $this->getLogger()->info('初期化完了');
     }
     //pluginが有効になった時に実行
@@ -129,22 +132,22 @@ class Main extends PluginBase implements Listener{
                     switch($this->teamname){
 
                         case 'red' : 
-                            $this->team_config = $this->red;  
+                            $this->team_config = $red;  
                             $this->color = '§4';
                         break;
 
                         case 'blue' : 
-                            $this->team_config = $this->blue;
+                            $this->team_config = $blue;
                             $this->color = '§1';
                         break;
 
                         case 'yellow' : 
-                            $this->team_config = $this->yellow;
+                            $this->team_config = $yellow;
                             $this->color = '§6';
                         break;
 
                         case 'green' : 
-                            $this->team_config = $this->green;
+                            $this->team_config = $green;
                             $this->color = '§2';
                         break;
 
