@@ -10,8 +10,6 @@ use pocketmine\command\CommandSender;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 use pocketmine\utils\Config;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
 
 //コマンド処理部分の読み込み
 //use team\command\TeamCommand;
@@ -26,7 +24,7 @@ class TeamCommand extends Command{
         $description = 'Team Plugin'; //プラグインの説明
         $usageMessage = '/team [操作]'; //使い方の説明
         $aliases = array('tm'); //コマンドエイリアス
-        parent::construct($name, $description, $usageMessage, $aliases);
+        parent::__construct($name, $description, $usageMessage, $aliases);
 
         $permission = 'teamplugin.command'; //パーミッションノード
         $this->setPermission($permission);

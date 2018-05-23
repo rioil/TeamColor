@@ -42,6 +42,11 @@ class Main extends PluginBase implements Listener{
         $blue = new Config($this->getDataFolder() . 'teams/blue.yml', Config::YAML, array('member' => 0));
         $yellow = new Config($this->getDataFolder() . 'teams/yellow.yml', Config::YAML, array('member' => 0));
         $green = new Config($this->getDataFolder() . 'teams/green.yml', Config::YAML, array('member' => 0));
+        
+        //コマンド処理クラスの指定
+        $class = '\\teamcolor\\command\\TeamCommand'; //作成したクラスの場所(srcディレクトリより相対)
+        $this->getServer()->getCommandMap()->register('TeamCommand', new $class);
+
         $this->getLogger()->info('初期化完了');
     }
     //pluginが有効になった時に実行
@@ -84,142 +89,5 @@ class Main extends PluginBase implements Listener{
         }
         $player->setNameTag($this->color . $player->getName());
         $player->setNameTagVisible(true);
-    }
-
-    public function onCommand(CommandSender $sender, Command $command, $label, array $args) : bool {
-
-        switch (strtolower($command->getName())){
-    
-            case 'team':
-
-                $sender->sendMessage('§3＝チーム一覧＝');
-                $sender->sendMessage('§4red');
-                $sender->sendMessage('§1blue');
-                $sender->sendMessage('§6yellow');
-                $sender->sendMessage('§2green');           
-                $sender->sendMessage('§3＝＝＝＝＝＝＝');
-
-            break;
-
-            case 'join' :
-
-                if(isset($args[0])){
-                    $this->teamname = strtolower($args[0]);
-                        //チームが存在しないとき
-                        if(!($this->teamname == 'red' || 'blue' || 'yellow' || 'green')){
-                            $sender->sendMessage('チーム：' . $this->teamname . 'は存在しません');
-                            break;
-                        }
-                        //プレイヤーのコンフィグ準備
-                        $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
-                }
-                else{
-                    $sender->sendMessage('§4チーム名を正しく指定してください');
-                    break ;
-                }
-
-                //今入っているチームを確認
-                if($this->player_config->get('team') !== $this->teamname){
-                    //すでにチームに所属していればそのチームを抜けることを通知
-                    if($this->player_config->get('team') !== ''){
-                        $sender->sendMessage('チーム' . $this->player_config->get('team') . 'から抜けます');
-                    }
-                    //コンフィグに参加するチーム名をセット
-                    $this->player_config->set('team',$this->teamname);
-                    $this->player_config->save();
-
-                    //チームのコンフィグファイルと色を指定
-                    switch($this->teamname){
-
-                        case 'red' : 
-                            $this->team_config = $red;  
-                            $this->color = '§4';
-                        break;
-
-                        case 'blue' : 
-                            $this->team_config = $blue;
-                            $this->color = '§1';
-                        break;
-
-                        case 'yellow' : 
-                            $this->team_config = $yellow;
-                            $this->color = '§6';
-                        break;
-
-                        case 'green' : 
-                            $this->team_config = $green;
-                            $this->color = '§2';
-                        break;
-
-                    }
-                    //コンフィグに書き込み
-                    $this->team_config->set($sender->getName(),'0');
-                    $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
-                    $this->team_config->save();
-
-                    //プレイヤーのネームタグの色をチームカラーに変更
-                    $sender->setNameTag($this->color . $sender->getName());
-                    $sender->setNameTagVisible(true);
-                    //完了メッセージ
-                    $sender->sendMessage('チーム' . $this->teamname . 'に参加しました');
-                    $this->getLogger()->info($sender->getName() . 'がチーム' . $this->teamname . 'に参加しました');
-                }
-                else{
-                    $sender->sendMessage('§6すでにチーム' . $this->teamname . 'に所属しています');
-                }
-
-            break;
-
-            case 'leave' :
-
-                $this->send_player = $sender->getName();
-                //プレイヤーのコンフィグ準備
-                $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
-                //所属チームの確認
-                if($this->player_config->exists('team')){
-                    $this->teamname = $this->player_config->get('team');
-
-                    //チームのコンフィグを指定
-                    switch($this->teamname){
-
-                        case 'red' : 
-                            $this->team_config = $this->red;
-                        break;
-
-                        case 'blue' : 
-                            $this->team_config = $this->blue;
-                        break;
-
-                        case 'yellow' : 
-                            $this->team_config = $this->yellow;
-                        break;
-
-                        case 'green' : 
-                            $this->team_config = $this->green;
-                        break;
-                    }
-                    //コンフィグに書き込み
-                    $this->team_config->remove($sender->getName());
-                    $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
-                    $this->team_config->save();
-
-                    $this->player_config->set('team','');
-                    $this->player_config->save();
-                    //プレイヤーのネームタグを白色にする
-                    $sender->setNameTag('§f' . $sender->getName());
-                    //完了メッセージ
-                    $sender->sendMessage('チーム' . $this->current_team . 'から抜けました');
-                    $this->getLogger()->info($sender->getName() . 'がチーム' . $this->current_team . 'から抜けました');
-                }
-                else{
-                    $sender->sendMessage('§6現在どのチームにも属していません');
-                }
-
-            break;
-
-        }
-
-        return true;
-
     }
 }
