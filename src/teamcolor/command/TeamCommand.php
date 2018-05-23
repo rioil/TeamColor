@@ -11,9 +11,6 @@ use pocketmine\Server;
 use pocketmine\utils\Utils;
 use pocketmine\utils\Config;
 
-//コマンド処理部分の読み込み
-//use team\command\TeamCommand;
-
 class TeamCommand extends Command{
 
     private $teamlist;

@@ -13,9 +13,6 @@ use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 
-//コマンド処理部分の読み込み
-//use team\command\TeamCommand;
-
 class Main extends PluginBase implements Listener{
 
     public $red;
