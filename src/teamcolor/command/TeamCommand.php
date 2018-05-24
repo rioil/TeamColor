@@ -10,10 +10,12 @@ use pocketmine\command\CommandSender;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 use pocketmine\utils\Config;
+use teamcolor\Main;
 
 class TeamCommand extends Command{
 
     private $teamlist;
+    private $team;
 
     public function __construct(){
 
@@ -27,6 +29,44 @@ class TeamCommand extends Command{
         $this->setPermission($permission);
 
     }
+
+    public function get_teamconfig(string $team){
+
+        if($team !== ''){
+
+            $this->team = $team;
+            //configのセット
+            $this->team_config = Main::get_teamconfig($this->team);
+
+            switch($this->team){
+        
+                case 'red' :    
+                    $this->color = '§4';
+                break;
+
+                case 'blue' : 
+                    $this->color = '§1';
+                break;
+
+                case 'yellow' : 
+                    $this->color = '§6';
+                break;
+
+                case 'green' : 
+                    $this->color = '§2';
+                break;
+            }
+        }
+    }
+
+    public function set_array_nmember(){
+
+        $this->team_array = Main::get_team_array();
+        foreach($team_array as $this->tn ){
+            get_teamconfig($this->tn);
+            $this->nmenber[$this->tn] = $this->team_config->get('number');
+        }
+    }
     
     public function execute(CommandSender $sender, string $label, array $args) : bool {
 
@@ -36,11 +76,12 @@ class TeamCommand extends Command{
     
                 case 'info':
     
+                    $this->set_array_nmember(); //各チームの人数を取得
                     $sender->sendMessage('§3＝チーム一覧＝');
-                    $sender->sendMessage('§4red');
-                    $sender->sendMessage('§1blue');
-                    $sender->sendMessage('§6yellow');
-                    $sender->sendMessage('§2green');           
+                    $sender->sendMessage('§4red' . $nmember['red']);
+                    $sender->sendMessage('§1blue' . $nmember['blue']);
+                    $sender->sendMessage('§6yellow'  . $nmember['yellow']);
+                    $sender->sendMessage('§2green' . $nmember['green']);           
                     $sender->sendMessage('§3＝＝＝＝＝＝＝');
     
                 break;
@@ -48,10 +89,10 @@ class TeamCommand extends Command{
                 case 'join' :
     
                     if(isset($args[1])){
-                        $this->teamname = strtolower($args[1]);
+                        $this->join_team = strtolower($args[1]);
                             //チームが存在しないとき
-                            if(!($this->teamname == 'red' || 'blue' || 'yellow' || 'green')){
-                                $sender->sendMessage('チーム：' . $this->teamname . 'は存在しません');
+                            if(!($this->join_team == 'red' || 'blue' || 'yellow' || 'green')){
+                                $sender->sendMessage('チーム：' . $this->join_team . 'は存在しません');
                                 break;
                             }
                             //プレイヤーのコンフィグ準備
@@ -63,39 +104,27 @@ class TeamCommand extends Command{
                     }
     
                     //今入っているチームを確認
-                    if($this->player_config->get('team') !== $this->teamname){
+                    $this->current_team = $this->player_config->get('team');
+
+                    if($this->current_team !== $this->join_team){
+
                         //すでにチームに所属していればそのチームを抜けることを通知
-                        if($this->player_config->get('team') !== ''){
-                            $sender->sendMessage('チーム' . $this->player_config->get('team') . 'から抜けます');
+                        if($this->current_team !== ''){
+
+                            $sender->sendMessage('チーム' . $this->current_team . 'から抜けます');
+                            //configに書き込み
+                            get_teamconfig($this->current_team);
+                            $this->team_config->remove($sender->getName());
+                            $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                            $this->team_config->save();
+                            
                         }
                         //コンフィグに参加するチーム名をセット
-                        $this->player_config->set('team',$this->teamname);
+                        $this->player_config->set('team',$this->join_team);
                         $this->player_config->save();
     
                         //チームのコンフィグファイルと色を指定
-                        switch($this->teamname){
-    
-                            case 'red' : 
-                                $this->team_config = parent::$red;  
-                                $this->color = '§4';
-                            break;
-    
-                            case 'blue' : 
-                                $this->team_config = parent::$blue;
-                                $this->color = '§1';
-                            break;
-    
-                            case 'yellow' : 
-                                $this->team_config = parent::$yellow;
-                                $this->color = '§6';
-                            break;
-    
-                            case 'green' : 
-                                $this->team_config = parent::$green;
-                                $this->color = '§2';
-                            break;
-    
-                        }
+                        get_teamconfig($this->join_team);
                         //コンフィグに書き込み
                         $this->team_config->set($sender->getName(),'0');
                         $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
@@ -105,11 +134,11 @@ class TeamCommand extends Command{
                         $sender->setNameTag($this->color . $sender->getName());
                         $sender->setNameTagVisible(true);
                         //完了メッセージ
-                        $sender->sendMessage('チーム' . $this->teamname . 'に参加しました');
-                        $this->getLogger()->info($sender->getName() . 'がチーム' . $this->teamname . 'に参加しました');
+                        $sender->sendMessage('チーム' . $this->join_team . 'に参加しました');
+                        $this->getLogger()->info($sender->getName() . 'がチーム' . $this->join_team . 'に参加しました');
                     }
                     else{
-                        $sender->sendMessage('§6すでにチーム' . $this->teamname . 'に所属しています');
+                        $sender->sendMessage('§6すでにチーム' . $this->join_team . 'に所属しています');
                     }
     
                 break;
@@ -120,27 +149,10 @@ class TeamCommand extends Command{
                     $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
                     //所属チームの確認
                     if($this->player_config->exists('team')){
-                        $this->teamname = $this->player_config->get('team');
+                        $this->leave_team = $this->player_config->get('team');
     
                         //チームのコンフィグを指定
-                        switch($this->teamname){
-    
-                            case 'red' : 
-                                $this->team_config = parent::$red;
-                            break;
-    
-                            case 'blue' : 
-                                $this->team_config = parent::$blue;
-                            break;
-    
-                            case 'yellow' : 
-                                $this->team_config = parent::$yellow;
-                            break;
-    
-                            case 'green' : 
-                                $this->team_config = parent::$green;
-                            break;
-                        }
+                        get_teamconfig($this->leave_team);
                         //コンフィグに書き込み
                         $this->team_config->remove($sender->getName());
                         $this->team_config->set('member',(int)$this->team_config->get('member') - 1);

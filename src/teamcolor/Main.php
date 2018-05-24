@@ -19,6 +19,7 @@ class Main extends PluginBase implements Listener{
     public $blue;
     public $yellow;
     public $green;
+    public static $teams = array('red','blue','yellow','green');
 
     //plugin読み込み時に実行
     public function onLoad(){
@@ -86,5 +87,36 @@ class Main extends PluginBase implements Listener{
         }
         $player->setNameTag($this->color . $player->getName());
         $player->setNameTagVisible(true);
+    }
+
+    public static function get_team_array(){
+        return $teams;
+    }
+
+    public static function get_teamconfig(string $teamname){
+
+        if($teamname !== ''){
+
+            switch($teamname){
+        
+                case 'red' : 
+                    $team_config = $red;  
+                break;
+
+                case 'blue' : 
+                    $team_config = $blue;
+                break;
+
+                case 'yellow' : 
+                    $team_config = $yellow;
+                break;
+
+                case 'green' : 
+                    $team_config = $green;
+                break;
+            }
+
+            return $team_config;
+        }
     }
 }
