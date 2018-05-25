@@ -15,11 +15,13 @@ use pocketmine\event\player\PlayerJoinEvent;
 
 class Main extends PluginBase implements Listener{
 
-    public $red;
-    public $blue;
-    public $yellow;
-    public $green;
-    public static $teams = array('red','blue','yellow','green');
+    private static $red;
+    private static $blue;
+    private static $yellow;
+    private static $green;
+    private static $teams = array('red','blue','yellow','green');
+    public $team_config;
+    public $team_color;
 
     //plugin読み込み時に実行
     public function onLoad(){
@@ -36,10 +38,10 @@ class Main extends PluginBase implements Listener{
             @mkdir($this->getDataFolder() . 'teams');
         }
         //それぞれのチーム管理ファイルを作成
-        $red = new Config($this->getDataFolder() . 'teams/red.yml', Config::YAML, array('member' => 0));
-        $blue = new Config($this->getDataFolder() . 'teams/blue.yml', Config::YAML, array('member' => 0));
-        $yellow = new Config($this->getDataFolder() . 'teams/yellow.yml', Config::YAML, array('member' => 0));
-        $green = new Config($this->getDataFolder() . 'teams/green.yml', Config::YAML, array('member' => 0));
+        self::$red = new Config($this->getDataFolder() . 'teams/red.yml', Config::YAML, array('member' => 0));
+        self::$blue = new Config($this->getDataFolder() . 'teams/blue.yml', Config::YAML, array('member' => 0));
+        self::$yellow = new Config($this->getDataFolder() . 'teams/yellow.yml', Config::YAML, array('member' => 0));
+        self::$green = new Config($this->getDataFolder() . 'teams/green.yml', Config::YAML, array('member' => 0));
         
         //コマンド処理クラスの指定
         $class = '\\teamcolor\\command\\TeamCommand'; //作成したクラスの場所(srcディレクトリより相対)
@@ -66,31 +68,31 @@ class Main extends PluginBase implements Listener{
         switch($new_player_config->get('team')){
             
             case 'red' : 
-                $this->color = '§4';
+                $this->team_color = '§4';
             break;
 
             case 'blue' : 
-                $this->color = '§1';
+                $this->team_color = '§1';
             break;
 
             case 'yellow' : 
-                $this->color = '§6';
+                $this->team_color = '§6';
             break;
 
             case 'green' : 
-                $this->color = '§2';
+                $this->team_color = '§2';
             break;
 
             default :
-                $this->color = '§f';
+                $this->team_color = '§f';
             break;
         }
-        $player->setNameTag($this->color . $player->getName());
+        $player->setNameTag($this->team_color . $player->getName());
         $player->setNameTagVisible(true);
     }
 
     public static function get_team_array(){
-        return $teams;
+        return self::$teams;
     }
 
     public static function get_teamconfig(string $teamname){
@@ -100,23 +102,51 @@ class Main extends PluginBase implements Listener{
             switch($teamname){
         
                 case 'red' : 
-                    $team_config = $red;  
+                    $team_config = self::$red;  
                 break;
 
                 case 'blue' : 
-                    $team_config = $blue;
+                    $team_config = self::$blue;
                 break;
 
                 case 'yellow' : 
-                    $team_config = $yellow;
+                    $team_config = self::$yellow;
                 break;
 
                 case 'green' : 
-                    $team_config = $green;
+                    $team_config = self::$green;
                 break;
             }
 
             return $team_config;
+        }
+    }
+
+    public static function get_teamcolor(string $team){
+
+        switch($team){
+            
+            case 'red' : 
+                $team_color = '§4';
+            break;
+
+            case 'blue' : 
+                $team_color = '§1';
+            break;
+
+            case 'yellow' : 
+                $team_color = '§6';
+            break;
+
+            case 'green' : 
+                $team_color = '§2';
+            break;
+
+            default :
+                $team_color = '§f';
+            break;
+
+            return self::$team_color;
         }
     }
 }

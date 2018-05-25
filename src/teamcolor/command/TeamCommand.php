@@ -62,9 +62,9 @@ class TeamCommand extends Command{
     public function set_array_nmember(){
 
         $this->team_array = Main::get_team_array();
-        foreach($team_array as $this->tn ){
-            get_teamconfig($this->tn);
-            $this->nmenber[$this->tn] = $this->team_config->get('number');
+        foreach($this->team_array as $this->tn ){
+            $this->get_teamconfig($this->tn);
+            $this->nmember[$this->tn] = $this->team_config->get('member');
         }
     }
     
@@ -78,10 +78,10 @@ class TeamCommand extends Command{
     
                     $this->set_array_nmember(); //各チームの人数を取得
                     $sender->sendMessage('§3＝チーム一覧＝');
-                    $sender->sendMessage('§4red' . $nmember['red']);
-                    $sender->sendMessage('§1blue' . $nmember['blue']);
-                    $sender->sendMessage('§6yellow'  . $nmember['yellow']);
-                    $sender->sendMessage('§2green' . $nmember['green']);           
+                    $sender->sendMessage('§4red     §f' . $this->nmember['red'] .'人');
+                    $sender->sendMessage('§1blue    §f' . $this->nmember['blue'].'人');
+                    $sender->sendMessage('§6yellow  §f' . $this->nmember['yellow'].'人');
+                    $sender->sendMessage('§2green   §f' . $this->nmember['green'].'人');           
                     $sender->sendMessage('§3＝＝＝＝＝＝＝');
     
                 break;
