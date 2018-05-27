@@ -75,7 +75,7 @@ class TeamCommand extends Command{
 
                             $sender->sendMessage('チーム' . $this->current_team . 'から抜けます');
                             //configに書き込み
-                            get_teamconfig($this->current_team);
+                            $this->team_config = Main::get_team_config($this->current_team);
                             $this->team_config->remove($sender->getName());
                             $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
                             $this->team_config->save();
@@ -86,7 +86,8 @@ class TeamCommand extends Command{
                         $this->player_config->save();
     
                         //チームのコンフィグファイルと色を指定
-                        get_teamconfig($this->join_team);
+                        $this->team_config = Main::get_team_config($this->join_team);
+                        $this->color = Main::get_team_color($this->join_team);
                         //コンフィグに書き込み
                         $this->team_config->set($sender->getName(),'0');
                         $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
@@ -114,7 +115,7 @@ class TeamCommand extends Command{
                         $this->leave_team = $this->player_config->get('team');
     
                         //チームのコンフィグを指定
-                        get_teamconfig($this->leave_team);
+                        $this->team_config = Main::get_teamconfig($this->leave_team);
                         //コンフィグに書き込み
                         $this->team_config->remove($sender->getName());
                         $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
