@@ -20,8 +20,9 @@ class Main extends PluginBase implements Listener{
     private static $yellow;
     private static $green;
     private static $teams = array('red','blue','yellow','green');
-    public $team_config;
-    public $team_color;
+    private $team_config;
+    private $team_color;
+    private static $nmember;
 
     //plugin読み込み時に実行
     public function onLoad(){
@@ -65,28 +66,7 @@ class Main extends PluginBase implements Listener{
         $player_name = $event->getPlayer()->getName();
         $new_player_config = new Config($this->getDataFolder() . 'players/' . $player_name . '.yml', Config::YAML, array('team' => ''));
         //チーム名の表示
-        switch($new_player_config->get('team')){
-            
-            case 'red' : 
-                $this->team_color = '§4';
-            break;
-
-            case 'blue' : 
-                $this->team_color = '§1';
-            break;
-
-            case 'yellow' : 
-                $this->team_color = '§6';
-            break;
-
-            case 'green' : 
-                $this->team_color = '§2';
-            break;
-
-            default :
-                $this->team_color = '§f';
-            break;
-        }
+        self::get_teamcolor($new_player_config->get('team'));        
         $player->setNameTag($this->team_color . $player->getName());
         $player->setNameTagVisible(true);
     }
@@ -95,34 +75,34 @@ class Main extends PluginBase implements Listener{
         return self::$teams;
     }
 
-    public static function get_teamconfig(string $teamname){
+    public static function get_team_config(string $teamname){
 
         if($teamname !== ''){
 
             switch($teamname){
         
                 case 'red' : 
-                    $team_config = self::$red;  
+                    $config = self::$red;  
                 break;
 
                 case 'blue' : 
-                    $team_config = self::$blue;
+                    $config = self::$blue;
                 break;
 
                 case 'yellow' : 
-                    $team_config = self::$yellow;
+                    $config = self::$yellow;
                 break;
 
                 case 'green' : 
-                    $team_config = self::$green;
+                    $config = self::$green;
                 break;
             }
 
-            return $team_config;
+            return $config;
         }
     }
 
-    public static function get_teamcolor(string $team){
+    public static function get_team_color(string $team){
 
         switch($team){
             
@@ -146,7 +126,16 @@ class Main extends PluginBase implements Listener{
                 $team_color = '§f';
             break;
 
-            return self::$team_color;
+            return $team_color;
         }
+    }
+
+    public static function set_nmember2array(){
+
+        foreach(self::$teams as $team_name ){
+            $team_config = self::get_team_config($team_name);
+            $nmember[$team_name] = $team_config->get('member');
+        }
+        return $nmember;
     }
 }

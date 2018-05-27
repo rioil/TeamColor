@@ -30,44 +30,6 @@ class TeamCommand extends Command{
 
     }
 
-    public function get_teamconfig(string $team){
-
-        if($team !== ''){
-
-            $this->team = $team;
-            //configのセット
-            $this->team_config = Main::get_teamconfig($this->team);
-
-            switch($this->team){
-        
-                case 'red' :    
-                    $this->color = '§4';
-                break;
-
-                case 'blue' : 
-                    $this->color = '§1';
-                break;
-
-                case 'yellow' : 
-                    $this->color = '§6';
-                break;
-
-                case 'green' : 
-                    $this->color = '§2';
-                break;
-            }
-        }
-    }
-
-    public function set_array_nmember(){
-
-        $this->team_array = Main::get_team_array();
-        foreach($this->team_array as $this->tn ){
-            $this->get_teamconfig($this->tn);
-            $this->nmember[$this->tn] = $this->team_config->get('member');
-        }
-    }
-    
     public function execute(CommandSender $sender, string $label, array $args) : bool {
 
         if(isset($args[0])){
@@ -75,8 +37,8 @@ class TeamCommand extends Command{
             switch (strtolower($args[0])){
     
                 case 'info':
-    
-                    $this->set_array_nmember(); //各チームの人数を取得
+                    
+                    $this->nmember = Main::set_nmember2array(); //各チームの人数を取得
                     $sender->sendMessage('§3＝チーム一覧＝');
                     $sender->sendMessage('§4red     §f' . $this->nmember['red'] .'人');
                     $sender->sendMessage('§1blue    §f' . $this->nmember['blue'].'人');
