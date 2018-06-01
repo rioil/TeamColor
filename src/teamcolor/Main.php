@@ -48,6 +48,7 @@ class Main extends PluginBase implements Listener{
 
         $this->getLogger()->info('初期化完了');
     }
+    
     //pluginが有効になった時に実行
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this,$this); //イベント登録
