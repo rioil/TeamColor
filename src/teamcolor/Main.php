@@ -26,6 +26,7 @@ class Main extends PluginBase implements Listener{
 
     //plugin読み込み時に実行
     public function onLoad(){
+
         //設定ファイル保存場所作成
         if(!file_exists($this->getDataFolder())){
             @mkdir($this->getDataFolder());
@@ -38,11 +39,8 @@ class Main extends PluginBase implements Listener{
         if(!file_exists($this->getDataFolder() . 'teams')){
             @mkdir($this->getDataFolder() . 'teams');
         }
-        //それぞれのチーム管理ファイルを作成
-        self::$red = new Config($this->getDataFolder() . 'teams/red.yml', Config::YAML, array('member' => 0));
-        self::$blue = new Config($this->getDataFolder() . 'teams/blue.yml', Config::YAML, array('member' => 0));
-        self::$yellow = new Config($this->getDataFolder() . 'teams/yellow.yml', Config::YAML, array('member' => 0));
-        self::$green = new Config($this->getDataFolder() . 'teams/green.yml', Config::YAML, array('member' => 0));
+        //それぞれのチームコンフィグを読み込み・作成
+        $this->road_team_config();
         
         //コマンド処理クラスの指定
         $class = '\\teamcolor\\command\\TeamCommand'; //作成したクラスの場所(srcディレクトリより相対)
@@ -62,20 +60,40 @@ class Main extends PluginBase implements Listener{
 
     //プレイヤーが入ったらconfigの生成
     public function onPlayerJoin(PlayerJoinEvent $event){
+
+        //プレイヤー情報の取得・コンフィグを準備
         $player = $event->getPlayer();
         $player_name = $event->getPlayer()->getName();
         $new_player_config = new Config($this->getDataFolder() . 'players/' . $player_name . '.yml', Config::YAML, array('team' => ''));
+        
         //チーム名の表示
-        self::get_teamcolor($new_player_config->get('team'));        
-        $player->setNameTag($this->team_color . $player->getName());
-        $player->setNameTagVisible(true);
+        if($new_player_config->exists('team')){
+
+            $this->team_color = self::get_team_color($new_player_config->get('team'));        
+            $player->setNameTag($this->team_color . $player->getName());
+            $player->setNameTagVisible(true);
+
+        }
     }
 
     public static function get_team_array(){
         return self::$teams;
     }
 
-    public static function get_team_config(string $teamname){
+    private function road_team_config(){
+
+        foreach(self::$teams as $team_name){
+            //チームのコンフィグを読み込み・作成
+            self::$$team_name = new Config($this->getDataFolder() . 'teams/' . $team_name . '.yml', Config::YAML);
+            //人数の項目がなければ0をセット
+            if(!self::$$team_name->exists('member')){
+                self::$$team_name->set('member','0');
+                self::$$team_name->save();
+            }
+        }
+    }
+
+    public static function get_team_config(string $teamname) : config{
 
         if($teamname !== ''){
 
@@ -102,7 +120,7 @@ class Main extends PluginBase implements Listener{
         }
     }
 
-    public static function get_team_color(string $team){
+    public static function get_team_color(string $team) : string{
 
         switch($team){
             
@@ -130,9 +148,9 @@ class Main extends PluginBase implements Listener{
         }
     }
 
-    public static function set_nmember2array(){
+    public static function get_number0member() : array{
 
-        foreach(self::$teams as $team_name ){
+        foreach(self::$teams as $team_name){
             $team_config = self::get_team_config($team_name);
             $nmember[$team_name] = $team_config->get('member');
         }

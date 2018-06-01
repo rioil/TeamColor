@@ -38,7 +38,7 @@ class TeamCommand extends Command{
     
                 case 'info':
                     
-                    $this->nmember = Main::set_nmember2array(); //各チームの人数を取得
+                    $this->nmember = Main::get_number0member(); //各チームの人数を取得
                     $sender->sendMessage('§3＝チーム一覧＝');
                     $sender->sendMessage('§4red     §f' . $this->nmember['red'] .'人');
                     $sender->sendMessage('§1blue    §f' . $this->nmember['blue'].'人');
