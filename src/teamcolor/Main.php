@@ -13,6 +13,11 @@ use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 
+##TODO##
+/*
+sendTip()というのとスケジューラーを組み合わせれば画面に現在のチーム情報を表示できるかも
+*/
+
 class Main extends PluginBase implements Listener{
 
     private static $red;
@@ -40,7 +45,7 @@ class Main extends PluginBase implements Listener{
             @mkdir($this->getDataFolder() . 'teams');
         }
         //それぞれのチームコンフィグを読み込み・作成
-        $this->road_team_config();
+        $this->load_team_config();
         
         //コマンド処理クラスの指定
         $class = '\\teamcolor\\command\\TeamCommand'; //作成したクラスの場所(srcディレクトリより相対)
@@ -48,7 +53,7 @@ class Main extends PluginBase implements Listener{
 
         $this->getLogger()->info('初期化完了');
     }
-    
+
     //pluginが有効になった時に実行
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this,$this); //イベント登録
@@ -65,7 +70,7 @@ class Main extends PluginBase implements Listener{
         //プレイヤー情報の取得・コンフィグを準備
         $player = $event->getPlayer();
         $player_name = $event->getPlayer()->getName();
-        $new_player_config = new Config($this->getDataFolder() . 'players/' . $player_name . '.yml', Config::YAML, array('team' => ''));
+        $new_player_config = new Config($this->getDataFolder() . 'players/' . $player_name . '.yml', Config::YAML);
         
         //チーム名の表示
         if($new_player_config->exists('team')){
@@ -81,7 +86,7 @@ class Main extends PluginBase implements Listener{
         return self::$teams;
     }
 
-    private function road_team_config(){
+    private function load_team_config(){
 
         foreach(self::$teams as $team_name){
             //チームのコンフィグを読み込み・作成
@@ -144,9 +149,9 @@ class Main extends PluginBase implements Listener{
             default :
                 $team_color = '§f';
             break;
-
-            return $team_color;
         }
+
+        return $team_color;
     }
 
     public static function get_number0member() : array{
