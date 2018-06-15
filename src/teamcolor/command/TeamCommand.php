@@ -12,10 +12,16 @@ use pocketmine\utils\Utils;
 use pocketmine\utils\Config;
 use teamcolor\Main;
 
+/*
+TODO:
+getDataFolder()を呼ぶ方法がわからない
+*/
 class TeamCommand extends Command{
 
     private $teamlist;
     private $team;
+    private $pmmp;
+    private static $plugin;
 
     public function __construct(){
 
@@ -28,6 +34,7 @@ class TeamCommand extends Command{
         $permission = 'teamplugin.command'; //パーミッションノード
         $this->setPermission($permission);
 
+        self::$plugin = Main::getPlugin();
     }
 
     public function execute(CommandSender $sender, string $label, array $args) : bool {
@@ -58,7 +65,7 @@ class TeamCommand extends Command{
                                 break;
                             }
                             //プレイヤーのコンフィグ準備
-                            $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
+                            $this->player_config = new Config(self::getPlugin()->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
                     }
                     else{
                         $sender->sendMessage('§4チーム名を正しく指定してください');
@@ -98,7 +105,7 @@ class TeamCommand extends Command{
                         $sender->setNameTagVisible(true);
                         //完了メッセージ
                         $sender->sendMessage('チーム' . $this->join_team . 'に参加しました');
-                        $this->getLogger()->info($sender->getName() . 'がチーム' . $this->join_team . 'に参加しました');
+                        $this->getPlugin()->getLogger()->info($sender->getName() . 'がチーム' . $this->join_team . 'に参加しました');
                     }
                     else{
                         $sender->sendMessage('§6すでにチーム' . $this->join_team . 'に所属しています');
@@ -109,13 +116,13 @@ class TeamCommand extends Command{
                 case 'leave' :
     
                     //プレイヤーのコンフィグ準備
-                    $this->player_config = new Config($this->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
+                    $this->player_config = new Config(self::getPlugin()->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
                     //所属チームの確認
                     if($this->player_config->exists('team')){
                         $this->leave_team = $this->player_config->get('team');
     
                         //チームのコンフィグを指定
-                        $this->team_config = Main::get_teamconfig($this->leave_team);
+                        $this->team_config = Main::get_team_config($this->leave_team);
                         //コンフィグに書き込み
                         $this->team_config->remove($sender->getName());
                         $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
@@ -127,7 +134,7 @@ class TeamCommand extends Command{
                         $sender->setNameTag('§f' . $sender->getName());
                         //完了メッセージ
                         $sender->sendMessage('チーム' . $this->current_team . 'から抜けました');
-                        $this->getLogger()->info($sender->getName() . 'がチーム' . $this->current_team . 'から抜けました');
+                        $this->getPlugin()->getLogger()->info($sender->getName() . 'がチーム' . $this->current_team . 'から抜けました');
                     }
                     else{
                         $sender->sendMessage('§6現在どのチームにも属していません');
@@ -148,5 +155,9 @@ class TeamCommand extends Command{
 
         return true;
 
+    }
+
+    private static function getPlugin(){
+        return Main::getPlugin();
     }
 }

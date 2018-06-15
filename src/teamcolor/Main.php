@@ -20,14 +20,32 @@ sendTip()というのとスケジューラーを組み合わせれば画面に�
 
 class Main extends PluginBase implements Listener{
 
+    /**赤チームのコンフィグ*/
     private static $red;
+
+    /**青チームのコンフィグ*/
     private static $blue;
+
+    /**黃チームのコンフィグ*/
     private static $yellow;
+
+    /**緑チームのコンフィグ*/
     private static $green;
+
+    /**チーム名の配列*/
     private static $teams = array('red','blue','yellow','green');
+
+    /**操作中のチームコンフィグ*/
     private $team_config;
+
+    /**操作中のチームの色*/
     private $team_color;
+
+    /**操作中のチームの人数*/
     private static $nmember;
+
+    /**このクラスを格納*/
+    private static $plugin;
 
     //plugin読み込み時に実行
     public function onLoad(){
@@ -50,6 +68,9 @@ class Main extends PluginBase implements Listener{
         //コマンド処理クラスの指定
         $class = '\\teamcolor\\command\\TeamCommand'; //作成したクラスの場所(srcディレクトリより相対)
         $this->getServer()->getCommandMap()->register('TeamCommand', new $class);
+
+        //コマンドクラスでgetDatafolderを使うため
+        self::$plugin = $this;
 
         $this->getLogger()->info('初期化完了');
     }
@@ -82,10 +103,12 @@ class Main extends PluginBase implements Listener{
         }
     }
 
+    //チーム名の配列を取得
     public static function get_team_array(){
         return self::$teams;
     }
 
+    //チームのコンフィグを読み込み・準備
     private function load_team_config(){
 
         foreach(self::$teams as $team_name){
@@ -99,6 +122,7 @@ class Main extends PluginBase implements Listener{
         }
     }
 
+    //指定したチームのコンフィグを取得
     public static function get_team_config(string $teamname) : config{
 
         if($teamname !== ''){
@@ -126,6 +150,7 @@ class Main extends PluginBase implements Listener{
         }
     }
 
+    //指定したチームの色を取得
     public static function get_team_color(string $team) : string{
 
         switch($team){
@@ -154,12 +179,18 @@ class Main extends PluginBase implements Listener{
         return $team_color;
     }
 
+    //チームの現在人数を格納した配列を取得
     public static function get_number0member() : array{
 
         foreach(self::$teams as $team_name){
             $team_config = self::get_team_config($team_name);
-            $nmember[$team_name] = $team_config->get('member');
+            self::$nmember[$team_name] = $team_config->get('member');
         }
-        return $nmember;
+        return self::$nmember;
+    }
+
+    //このクラスのインスタンス取得
+    public static function getPlugin(){
+        return self::$plugin;
     }
 }
