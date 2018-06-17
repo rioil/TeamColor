@@ -90,25 +90,29 @@ class Main extends PluginBase implements Listener{
 
         //プレイヤー情報の取得・コンフィグを準備
         $player = $event->getPlayer();
-        $player_name = $event->getPlayer()->getName();
-        $new_player_config = new Config($this->getDataFolder() . 'players/' . $player_name . '.yml', Config::YAML);
-        
+        $player_config = self::getPlayerConfig($player);
         //チーム名の表示
-        if($new_player_config->exists('team')){
+        if($player_config->exists('team')){
 
-            $this->new_player_team = $new_player_config->get('team');
+            $this->player_team = $player_config->get('team');
 
-            if($this->new_player_team != ''){
-                $this->team_color = self::getTeamColor($this->new_player_team);        
+            if($this->player_team != ''){
+                $this->team_color = self::getTeamColor($this->player_team);        
                 $player->setNameTag($this->team_color . $player->getName());
                 $player->setNameTagVisible(true);
 
                 //チーム人数をコンフィグに反映
-                $this->new_player_team_config = self::getTeamConfig($this->new_player_team);
-                $this->new_player_team_config->set('member',int($this->new_player_team_config->get('member')) + 1);
+                $this->team_config = self::getTeamConfig($this->player_team);
+                $this->team_config->set('member',int($this->team_config->get('member')) + 1);
             }
 
         }
+    }
+
+    //TODO プレイヤーが鯖から抜けた時チーム人数の変更
+    public function onPlayerQuit(PlayerJoinEvent $event){
+        $player = $event->getPlayer();
+        $player_config = self::getPlayerConfig($player);
     }
 
     //チーム名の配列を取得 使われてない？
@@ -194,6 +198,20 @@ class Main extends PluginBase implements Listener{
             self::$nmember[$team_name] = $team_config->get('member');
         }
         return self::$nmember;
+    }
+
+    public static function getPlayerConfig(player $player) : config{
+
+        if($player instanceof player){
+
+            $player_name = $player->getName();
+            $player_config = new Config(self::getPlugin()->getDataFolder() . 'players/' . $player_name . '.yml', Config::YAML);
+            return $player_config;
+        }
+        else{
+            return false;
+        }
+
     }
 
     //このクラスのインスタンス取得
