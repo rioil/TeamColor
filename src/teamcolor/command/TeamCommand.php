@@ -14,7 +14,9 @@ use teamcolor\Main;
 
 /*
 TODO:
-getDataFolder()を呼ぶ方法がわからない
+getDataFolder()を呼ぶ方法がわからない　解決済み
+チーム情報表示バグあり 人数カウント
+reload時のカウント要修正
 */
 class TeamCommand extends Command{
 
@@ -45,7 +47,7 @@ class TeamCommand extends Command{
     
                 case 'info':
                     
-                    $this->nmember = Main::get_number0member(); //各チームの人数を取得
+                    $this->nmember = Main::getNumber0member(); //各チームの人数を取得
                     $sender->sendMessage('§3＝チーム一覧＝');
                     $sender->sendMessage('§4red     §f' . $this->nmember['red'] .'人');
                     $sender->sendMessage('§1blue    §f' . $this->nmember['blue'].'人');
@@ -82,7 +84,7 @@ class TeamCommand extends Command{
 
                             $sender->sendMessage('チーム' . $this->current_team . 'から抜けます');
                             //configに書き込み
-                            $this->team_config = Main::get_team_config($this->current_team);
+                            $this->team_config = Main::getTeamConfig($this->current_team);
                             $this->team_config->remove($sender->getName());
                             $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
                             $this->team_config->save();
@@ -93,8 +95,8 @@ class TeamCommand extends Command{
                         $this->player_config->save();
     
                         //チームのコンフィグファイルと色を指定
-                        $this->team_config = Main::get_team_config($this->join_team);
-                        $this->color = Main::get_team_color($this->join_team);
+                        $this->team_config = Main::getTeamConfig($this->join_team);
+                        $this->color = Main::getTeamColor($this->join_team);
                         //コンフィグに書き込み
                         $this->team_config->set($sender->getName(),'0');
                         $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
@@ -119,26 +121,33 @@ class TeamCommand extends Command{
                     $this->player_config = new Config(self::getPlugin()->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
                     //所属チームの確認
                     if($this->player_config->exists('team')){
+                        
                         $this->leave_team = $this->player_config->get('team');
     
-                        //チームのコンフィグを指定
-                        $this->team_config = Main::get_team_config($this->leave_team);
-                        //コンフィグに書き込み
-                        $this->team_config->remove($sender->getName());
-                        $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
-                        $this->team_config->save();
-    
-                        $this->player_config->set('team','');
-                        $this->player_config->save();
-                        //プレイヤーのネームタグを白色にする
-                        $sender->setNameTag('§f' . $sender->getName());
-                        //完了メッセージ
-                        $sender->sendMessage('チーム' . $this->current_team . 'から抜けました');
-                        $this->getPlugin()->getLogger()->info($sender->getName() . 'がチーム' . $this->current_team . 'から抜けました');
+                        if($this->leave_team != ''){
+
+                            //チームのコンフィグを指定
+                            $this->team_config = Main::getTeamConfig($this->leave_team);
+
+                            //コンフィグに書き込み
+                            $this->team_config->remove($sender->getName());
+                            $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                            $this->team_config->save();
+        
+                            $this->player_config->set('team','');
+                            $this->player_config->save();
+
+                            //プレイヤーのネームタグを白色にする
+                            $sender->setNameTag('§f' . $sender->getName());
+
+                            //完了メッセージ
+                            $sender->sendMessage('チーム' . $this->leave_team . 'から抜けました');
+                            $this->getPlugin()->getLogger()->info($sender->getName() . 'がチーム' . $this->current_team . 'から抜けました');
+                            break;
+                        }
                     }
-                    else{
-                        $sender->sendMessage('§6現在どのチームにも属していません');
-                    }
+                    
+                    $sender->sendMessage('§6現在どのチームにも属していません');
     
                 break;
     

@@ -63,7 +63,7 @@ class Main extends PluginBase implements Listener{
             @mkdir($this->getDataFolder() . 'teams');
         }
         //それぞれのチームコンフィグを読み込み・作成
-        $this->load_team_config();
+        $this->loadTeamConfig();
         
         //コマンド処理クラスの指定
         $class = '\\teamcolor\\command\\TeamCommand'; //作成したクラスの場所(srcディレクトリより相対)
@@ -96,34 +96,41 @@ class Main extends PluginBase implements Listener{
         //チーム名の表示
         if($new_player_config->exists('team')){
 
-            $this->team_color = self::get_team_color($new_player_config->get('team'));        
-            $player->setNameTag($this->team_color . $player->getName());
-            $player->setNameTagVisible(true);
+            $this->new_player_team = $new_player_config->get('team');
+
+            if($this->new_player_team != ''){
+                $this->team_color = self::getTeamColor($this->new_player_team);        
+                $player->setNameTag($this->team_color . $player->getName());
+                $player->setNameTagVisible(true);
+
+                //チーム人数をコンフィグに反映
+                $this->new_player_team_config = self::getTeamConfig($this->new_player_team);
+                $this->new_player_team_config->set('member',int($this->new_player_team_config->get('member')) + 1);
+            }
 
         }
     }
 
-    //チーム名の配列を取得
-    public static function get_team_array(){
+    //チーム名の配列を取得 使われてない？
+    public static function getTeamAllay(){
         return self::$teams;
     }
 
     //チームのコンフィグを読み込み・準備
-    private function load_team_config(){
+    private function loadTeamConfig(){
 
         foreach(self::$teams as $team_name){
             //チームのコンフィグを読み込み・作成
             self::$$team_name = new Config($this->getDataFolder() . 'teams/' . $team_name . '.yml', Config::YAML);
-            //人数の項目がなければ0をセット
-            if(!self::$$team_name->exists('member')){
-                self::$$team_name->set('member','0');
-                self::$$team_name->save();
-            }
+            //人数の項目に0をセット
+            self::$$team_name->set('member','0');
+            self::$$team_name->save();
+            
         }
     }
 
     //指定したチームのコンフィグを取得
-    public static function get_team_config(string $teamname) : config{
+    public static function getTeamConfig(string $teamname) : config{
 
         if($teamname !== ''){
 
@@ -151,7 +158,7 @@ class Main extends PluginBase implements Listener{
     }
 
     //指定したチームの色を取得
-    public static function get_team_color(string $team) : string{
+    public static function getTeamColor(string $team) : string{
 
         switch($team){
             
@@ -180,10 +187,10 @@ class Main extends PluginBase implements Listener{
     }
 
     //チームの現在人数を格納した配列を取得
-    public static function get_number0member() : array{
+    public static function getNumber0member() : array{
 
         foreach(self::$teams as $team_name){
-            $team_config = self::get_team_config($team_name);
+            $team_config = self::getTeamConfig($team_name);
             self::$nmember[$team_name] = $team_config->get('member');
         }
         return self::$nmember;
