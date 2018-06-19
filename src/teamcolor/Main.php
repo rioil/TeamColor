@@ -13,6 +13,7 @@ use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\server\ServerCommandEvent;
 
 ##TODO##
 /*
@@ -48,6 +49,9 @@ class Main extends PluginBase implements Listener{
     /**このクラスを格納*/
     private static $plugin;
 
+    /**リロード検出用コンフィグ*/
+    private $reload;
+
     //plugin読み込み時に実行
     public function onLoad(){
 
@@ -63,8 +67,9 @@ class Main extends PluginBase implements Listener{
         if(!file_exists($this->getDataFolder() . 'teams')){
             @mkdir($this->getDataFolder() . 'teams');
         }
-        //それぞれのチームコンフィグを読み込み・作成
-        $this->loadTeamConfig();
+
+        //リロード検出用ファイル作成
+        $this->reload = new Config($this->getDataFolder() . 'reload.yml', Config::YAML);
         
         //コマンド処理クラスの指定
         $class = '\\teamcolor\\command\\TeamCommand'; //作成したクラスの場所(srcディレクトリより相対)
@@ -78,12 +83,33 @@ class Main extends PluginBase implements Listener{
 
     //pluginが有効になった時に実行
     public function onEnable(){
+
+        //それぞれのチームコンフィグを読み込み・作成(リロード時以外)
+        if($this->reload->get('reload') != true){
+            $this->loadTeamConfig();
+        }
+        else{
+            $this->reload->set('reload',false);
+            $this->reload->save();
+        }
+
         $this->getServer()->getPluginManager()->registerEvents($this,$this); //イベント登録
         $this->getLogger()->info('プラグインは有効になりました');
     }
 
     public function onDisable(){
         $this->getLogger()->info('プラグインは無効になりました');
+    }
+
+    //サーバーリロードの検出
+    public function onServerCommand(ServerCommandEvent $event){
+
+        $this->command = $event->getCommand();
+        if ($this->command == 'reload'){
+            $this->reload->set('reload',true);
+            $this->reload->save();
+            $this->getLogger()->info('リロードを検知');
+        }
     }
 
     //プレイヤーが入ったらconfigの生成
