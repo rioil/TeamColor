@@ -12,12 +12,6 @@ use pocketmine\utils\Utils;
 use pocketmine\utils\Config;
 use teamcolor\Main;
 
-/*
-TODO:
-getDataFolder()を呼ぶ方法がわからない　解決済み
-チーム情報表示バグあり 人数カウント
-reload時のカウント要修正
-*/
 class TeamCommand extends Command{
 
     private $teamlist;
