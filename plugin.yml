@@ -1,7 +1,7 @@
 #PMMPでマルチをするときのチーム分け用プラグイン
 name: TeamColor
 main: teamcolor\Main
-version: 1.1.0
+version: 1.2.0
 api: 3.0.0-ALPHA12
    
 permissions:
