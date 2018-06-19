@@ -12,6 +12,7 @@ use pocketmine\utils\Utils;
 use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 
 ##TODO##
 /*
@@ -110,9 +111,24 @@ class Main extends PluginBase implements Listener{
     }
 
     //TODO プレイヤーが鯖から抜けた時チーム人数の変更
-    public function onPlayerQuit(PlayerJoinEvent $event){
+    public function onPlayerQuit(PlayerQuitEvent $event){
+
         $player = $event->getPlayer();
         $player_config = self::getPlayerConfig($player);
+
+        //チームの人数に反映
+        if($player_config->exists('team')){
+
+            $this->player_team = $player_config->get('team');
+
+            if($this->player_team != ''){      
+                //チーム人数をコンフィグに反映
+                $this->team_config = self::getTeamConfig($this->player_team);
+                $this->team_config->set('member',int($this->team_config->get('member')) - 1);
+            }
+
+        }
+
     }
 
     //チーム名の配列を取得 使われてない？
