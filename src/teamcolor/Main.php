@@ -157,7 +157,7 @@ class Main extends PluginBase implements Listener{
 
     }
 
-    //チーム名の配列を取得 使われてない？
+    //チーム名の配列を取得
     public static function getTeamAllay(){
         return self::$teams;
     }
