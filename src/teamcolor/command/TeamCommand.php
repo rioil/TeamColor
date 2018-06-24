@@ -50,6 +50,16 @@ class TeamCommand extends Command{
                     $sender->sendMessage('§3＝＝＝＝＝＝＝');
     
                 break;
+
+                //ここから下のコマンドはプレイヤーのみ実行できる
+                case true:
+                
+                    if(!$sender instanceof Player){
+                        
+                        $sender->sendMessage('このコマンドはプレイヤーのみ実行できます');
+                        break;
+                    }
+
     
                 case 'join' :
     
