@@ -53,8 +53,8 @@ class TeamCommand extends Command{
 
                 //ここから下のコマンドはプレイヤーのみ実行できる
                 case true:
-                
-                    if(!$sender instanceof Player){
+
+                    if(!($sender instanceof Player)){
                         
                         $sender->sendMessage('このコマンドはプレイヤーのみ実行できます');
                         break;
