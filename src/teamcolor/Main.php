@@ -130,7 +130,7 @@ class Main extends PluginBase implements Listener{
 
                 //チーム人数をコンフィグに反映
                 $this->team_config = self::getTeamConfig($this->player_team);
-                $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
+                $this->team_config->set('member',$this->team_config->get('member') + 1);
             }
 
         }
@@ -154,7 +154,7 @@ class Main extends PluginBase implements Listener{
             if($this->player_team != ''){      
                 //チーム人数をコンフィグに反映
                 $this->team_config = self::getTeamConfig($this->player_team);
-                $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                $this->team_config->set('member',$this->team_config->get('member') - 1);
             }
 
         }

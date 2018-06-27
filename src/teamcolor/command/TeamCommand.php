@@ -14,6 +14,7 @@ use teamcolor\Main;
 
 class TeamCommand extends Command{
 
+    /* @*/
     private $teamlist;
     private $team;
     private $pmmp;
@@ -90,7 +91,7 @@ class TeamCommand extends Command{
                             //configに書き込み
                             $this->team_config = Main::getTeamConfig($this->current_team);
                             $this->team_config->remove($sender->getName());
-                            $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                            $this->team_config->set('member',$this->team_config->get('member') - 1);
                             $this->team_config->save();
                             
                         }
@@ -103,7 +104,7 @@ class TeamCommand extends Command{
                         $this->color = Main::getTeamColor($this->join_team);
                         //コンフィグに書き込み
                         $this->team_config->set($sender->getName(),'0');
-                        $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
+                        $this->team_config->set('member',$this->team_config->get('member') + 1);
                         $this->team_config->save();
     
                         //プレイヤーのネームタグの色をチームカラーに変更
@@ -141,7 +142,7 @@ class TeamCommand extends Command{
 
                             //コンフィグに書き込み
                             $this->team_config->remove($sender->getName());
-                            $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                            $this->team_config->set('member',$this->team_config->get('member') - 1);
                             $this->team_config->save();
         
                             $this->player_config->set('team','');
