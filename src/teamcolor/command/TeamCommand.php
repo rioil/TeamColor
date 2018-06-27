@@ -14,10 +14,8 @@ use teamcolor\Main;
 
 class TeamCommand extends Command{
 
-    private $teamlist;
-    private $team;
-    private $pmmp;
-    private static $plugin;
+    /* @var */
+    
 
     public function __construct(){
 
@@ -29,8 +27,6 @@ class TeamCommand extends Command{
 
         $permission = 'teamplugin.command'; //パーミッションノード
         $this->setPermission($permission);
-
-        self::$plugin = Main::getPlugin();
     }
 
     public function execute(CommandSender $sender, string $label, array $args) : bool {
@@ -66,7 +62,7 @@ class TeamCommand extends Command{
                     if(isset($args[1])){
                         $this->join_team = strtolower($args[1]);
                             //チームが存在しないとき
-                            if(!($this->join_team == 'red' || 'blue' || 'yellow' || 'green')){
+                            if(!in_array($this->join_team,Main::getTeamArray())){
                                 $sender->sendMessage('チーム：' . $this->join_team . 'は存在しません');
                                 break;
                             }
@@ -90,7 +86,7 @@ class TeamCommand extends Command{
                             //configに書き込み
                             $this->team_config = Main::getTeamConfig($this->current_team);
                             $this->team_config->remove($sender->getName());
-                            $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                            $this->team_config->set('member',$this->team_config->get('member') - 1);
                             $this->team_config->save();
                             
                         }
@@ -103,7 +99,7 @@ class TeamCommand extends Command{
                         $this->color = Main::getTeamColor($this->join_team);
                         //コンフィグに書き込み
                         $this->team_config->set($sender->getName(),'0');
-                        $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
+                        $this->team_config->set('member',$this->team_config->get('member') + 1);
                         $this->team_config->save();
     
                         //プレイヤーのネームタグの色をチームカラーに変更
@@ -128,14 +124,20 @@ class TeamCommand extends Command{
                         
                         $this->leave_team = $this->player_config->get('team');
     
-                        if($this->leave_team != ''){
+                        if($this->leave_team != NULL){
 
+                            if(!in_array($this->leave_team, Main::getTeamAllay())){
+                                $sender->sendMessage('チーム：' . $this->leave_team . 'は存在しません');
+                                $this->player_config->set('team',NULL);
+                                $sender->sendMessage('所属チームをリセットしました');
+                                break;
+                            }
                             //チームのコンフィグを指定
                             $this->team_config = Main::getTeamConfig($this->leave_team);
 
                             //コンフィグに書き込み
                             $this->team_config->remove($sender->getName());
-                            $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
+                            $this->team_config->set('member',$this->team_config->get('member') - 1);
                             $this->team_config->save();
         
                             $this->player_config->set('team','');
@@ -152,6 +154,7 @@ class TeamCommand extends Command{
                     }
                     
                     $sender->sendMessage('§6現在どのチームにも属していません');
+                    $this->player_config->set('team',NULL);
     
                 break;
     
