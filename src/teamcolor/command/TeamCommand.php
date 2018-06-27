@@ -14,11 +14,8 @@ use teamcolor\Main;
 
 class TeamCommand extends Command{
 
-    /* @*/
-    private $teamlist;
-    private $team;
-    private $pmmp;
-    private static $plugin;
+    /* @var */
+    
 
     public function __construct(){
 
@@ -30,8 +27,6 @@ class TeamCommand extends Command{
 
         $permission = 'teamplugin.command'; //パーミッションノード
         $this->setPermission($permission);
-
-        self::$plugin = Main::getPlugin();
     }
 
     public function execute(CommandSender $sender, string $label, array $args) : bool {
