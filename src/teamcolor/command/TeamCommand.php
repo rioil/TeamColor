@@ -66,7 +66,7 @@ class TeamCommand extends Command{
                     if(isset($args[1])){
                         $this->join_team = strtolower($args[1]);
                             //チームが存在しないとき
-                            if(!($this->join_team == 'red' || 'blue' || 'yellow' || 'green')){
+                            if(!in_array($this->join_team,Main::getTeamArray())){
                                 $sender->sendMessage('チーム：' . $this->join_team . 'は存在しません');
                                 break;
                             }
@@ -128,8 +128,14 @@ class TeamCommand extends Command{
                         
                         $this->leave_team = $this->player_config->get('team');
     
-                        if($this->leave_team != ''){
+                        if($this->leave_team != NULL){
 
+                            if(!in_array($this->leave_team, Main::getTeamAllay())){
+                                $sender->sendMessage('チーム：' . $this->leave_team . 'は存在しません');
+                                $this->player_config->set('team',NULL);
+                                $sender->sendMessage('所属チームをリセットしました');
+                                break;
+                            }
                             //チームのコンフィグを指定
                             $this->team_config = Main::getTeamConfig($this->leave_team);
 
@@ -152,6 +158,7 @@ class TeamCommand extends Command{
                     }
                     
                     $sender->sendMessage('§6現在どのチームにも属していません');
+                    $this->player_config->set('team',NULL);
     
                 break;
     

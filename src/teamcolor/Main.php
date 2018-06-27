@@ -130,10 +130,14 @@ class Main extends PluginBase implements Listener{
 
                 //チーム人数をコンフィグに反映
                 $this->team_config = self::getTeamConfig($this->player_team);
-                $this->team_config->set('member',int($this->team_config->get('member')) + 1);
+                $this->team_config->set('member',(int)$this->team_config->get('member') + 1);
             }
 
         }
+        else{
+            $player_config->set('team',NULL);
+        }
+        //TODO初期参加プレイヤーのチームを指定する必要あり
     }
 
     //TODO プレイヤーが鯖から抜けた時チーム人数の変更
@@ -150,7 +154,7 @@ class Main extends PluginBase implements Listener{
             if($this->player_team != ''){      
                 //チーム人数をコンフィグに反映
                 $this->team_config = self::getTeamConfig($this->player_team);
-                $this->team_config->set('member',int($this->team_config->get('member')) - 1);
+                $this->team_config->set('member',(int)$this->team_config->get('member') - 1);
             }
 
         }
