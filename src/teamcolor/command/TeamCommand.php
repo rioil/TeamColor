@@ -54,10 +54,11 @@ class TeamCommand extends Command{
                         //エラーメッセージの送信
                         if(!in_array(strtolower($args[0]),Main::getCommandsAllay())){
                             $sender->sendMessage('存在しないコマンドです');
-                        break;
+                            break;
                         }
                         else{
                             $sender->sendMessage('このコマンドはプレイヤーのみが実行できます');
+                            break;
                         }
                     }
 
