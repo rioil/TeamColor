@@ -165,12 +165,12 @@ class Main extends PluginBase implements Listener{
     }
 
     //チーム名の配列を取得
-    public static function getTeamAllay(){
+    public static function getTeamArray(){
         return self::$teams;
     }
 
     //コマンド名の配列を取得
-    public static function getCommandsAllay(){
+    public static function getCommandsArray(){
         return self::$commands;
     }
 

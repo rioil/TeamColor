@@ -52,7 +52,7 @@ class TeamCommand extends Command{
 
                     if(!($sender instanceof Player)){
                         //エラーメッセージの送信
-                        if(!in_array(strtolower($args[0]),Main::getCommandsAllay())){
+                        if(!in_array(strtolower($args[0]),Main::getCommandsArray())){
                             $sender->sendMessage('存在しないコマンドです');
                             break;
                         }
@@ -132,7 +132,7 @@ class TeamCommand extends Command{
     
                         if($this->leave_team != NULL){
 
-                            if(!in_array($this->leave_team, Main::getTeamAllay())){
+                            if(!in_array($this->leave_team, Main::getTeamArray())){
                                 $sender->sendMessage('チーム：' . $this->leave_team . 'は存在しません');
                                 $this->player_config->set('team',NULL);
                                 $sender->sendMessage('所属チームをリセットしました');
