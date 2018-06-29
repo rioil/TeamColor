@@ -37,6 +37,9 @@ class Main extends PluginBase implements Listener{
     /**チーム名の配列*/
     private static $teams = array('red','blue','yellow','green');
 
+    /**コマンドの配列*/
+    private static $commands = array('info','join','leave');
+
     /**操作中のチームコンフィグ*/
     private $team_config;
 
@@ -164,6 +167,11 @@ class Main extends PluginBase implements Listener{
     //チーム名の配列を取得
     public static function getTeamAllay(){
         return self::$teams;
+    }
+
+    //コマンド名の配列を取得
+    public static function getCommandsAllay(){
+        return self::$commands;
     }
 
     //チームのコンフィグを読み込み・準備

@@ -14,7 +14,7 @@ use teamcolor\Main;
 
 class TeamCommand extends Command{
 
-    /* @var */
+    /*TODO:変数の型一覧記載 @var */
     
 
     public function __construct(){
@@ -51,9 +51,14 @@ class TeamCommand extends Command{
                 case true:
 
                     if(!($sender instanceof Player)){
-                        
-                        $sender->sendMessage('このコマンドはプレイヤーのみ実行できます');
+                        //エラーメッセージの送信
+                        if(!inarray(strtolower($args[0]),Main::getCommandsAllay())){
+                            $sender->sendMessage('存在しないコマンドです');
                         break;
+                        }
+                        else{
+                            $sender->sendMessage('このコマンドはプレイヤーのみが実行できます');
+                        }
                     }
 
     
@@ -157,7 +162,12 @@ class TeamCommand extends Command{
                     $this->player_config->set('team',NULL);
     
                 break;
-    
+
+                default :
+
+                    $sender->sendMessage('存在しないコマンドです');
+
+                break;
             }
         }
         else{
