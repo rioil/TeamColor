@@ -52,7 +52,7 @@ class TeamCommand extends Command{
 
                     if(!($sender instanceof Player)){
                         //エラーメッセージの送信
-                        if(!inarray(strtolower($args[0]),Main::getCommandsAllay())){
+                        if(!in_array(strtolower($args[0]),Main::getCommandsAllay())){
                             $sender->sendMessage('存在しないコマンドです');
                         break;
                         }
