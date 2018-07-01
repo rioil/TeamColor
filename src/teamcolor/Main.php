@@ -14,7 +14,9 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\ServerCommandEvent;
-
+use pocketmine\event\server\RemoteServerCommandEvent;
+use pocketmine\event\player\PlayerCommandPreprocessEvent;
+use pocketmine\event\player\PlayerChatEvent;
 ##TODO##
 /*
 sendTip()というのとスケジューラーを組み合わせれば画面に現在のチーム情報を表示できるかも
@@ -104,16 +106,48 @@ class Main extends PluginBase implements Listener{
         $this->getLogger()->info('プラグインは無効になりました');
     }
 
-    //サーバーリロードの検出
+    //サーバーリロードの検出 TODO:プレイヤーがreloadしたときの処理
     public function onServerCommand(ServerCommandEvent $event){
 
         $this->command = $event->getCommand();
+        $this->getLogger()->info(var_dump($this->command)); #debug
         if ($this->command == 'reload'){
             $this->reload->set('reload',true);
             $this->reload->save();
             $this->getLogger()->info('リロードを検知');
         }
     }
+    public function onRemoteServerCommand(RemoteServerCommandEvent $event){
+
+        $this->command = $event->getCommand();
+        $this->getLogger()->info(var_dump($this->command)); #debug
+        if ($this->command == '/reload'){
+            $this->reload->set('reload',true);
+            $this->reload->save();
+            $this->getLogger()->info('リロードを検知');
+        }
+    }
+    public function onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent $event){
+
+        $this->command = $event->getMessage();
+        $this->getLogger()->info(var_dump($this->command)); #debug
+        if ($this->command == '/reload'){
+            $this->reload->set('reload',true);
+            $this->reload->save();
+            $this->getLogger()->info('リロードを検知');
+        }
+    }
+    public function onPlayerChatEvent(PlayerChatEvent $event){
+
+        $this->command = $event->getMessage();
+        $this->getLogger()->info(var_dump($this->command)); #debug
+        if ($this->command == '/reload'){
+            $this->reload->set('reload',true);
+            $this->reload->save();
+            $this->getLogger()->info('リロードを検知');
+        }
+    }
+    
 
     //プレイヤーが入ったらconfigの生成
     public function onPlayerJoin(PlayerJoinEvent $event){
@@ -137,13 +171,13 @@ class Main extends PluginBase implements Listener{
             }
 
         }
+        //初期参加プレイヤーのチームを指定
         else{
             $player_config->set('team',NULL);
         }
-        //TODO初期参加プレイヤーのチームを指定する必要あり
     }
 
-    //TODO プレイヤーが鯖から抜けた時チーム人数の変更
+    //プレイヤーが鯖から抜けた時チーム人数の変更
     public function onPlayerQuit(PlayerQuitEvent $event){
 
         $player = $event->getPlayer();
@@ -271,5 +305,24 @@ class Main extends PluginBase implements Listener{
     //このクラスのインスタンス取得
     public static function getPlugin(){
         return self::$plugin;
+    }
+
+    //TODO 全プレイヤーにメッセージ送信
+    public static function sendMessageAllPlayer(string $world, string $message){
+
+        if($world != NULL){
+
+            $level = self::getPlugin()->getServer()->getLevelByName($world);
+
+            foreach(self::getPlugin()->getServer()->getOnlinePlayers() as $players){
+
+                $players_level = $players->getLevel();
+                $designation = $players_level->getName();
+
+                if($designation === $world){
+                    //その限定ワールドにいる人の処理
+                }
+            }
+        }
     }
 }

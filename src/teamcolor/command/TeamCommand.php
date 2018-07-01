@@ -46,26 +46,18 @@ class TeamCommand extends Command{
                     $sender->sendMessage('§3＝＝＝＝＝＝＝');
     
                 break;
-
-                //ここから下のコマンドはプレイヤーのみ実行できる
-                case true:
-
-                    if(!($sender instanceof Player)){
-                        //エラーメッセージの送信
-                        if(!in_array(strtolower($args[0]),Main::getCommandsArray())){
-                            $sender->sendMessage('存在しないコマンドです');
-                            break;
-                        }
-                        else{
-                            $sender->sendMessage('このコマンドはプレイヤーのみが実行できます');
-                            break;
-                        }
-                    }
-
     
                 case 'join' :
+
+                    //このコマンドはプレイヤーのみ実行できる
+                    if(!($sender instanceof Player)){
+                        //エラーメッセージの送信
+                        $sender->sendMessage('このコマンドはプレイヤーのみが実行できます');
+                        break;
+                    }
     
                     if(isset($args[1])){
+
                         $this->join_team = strtolower($args[1]);
                             //チームが存在しないとき
                             if(!in_array($this->join_team,Main::getTeamArray())){
@@ -122,6 +114,13 @@ class TeamCommand extends Command{
                 break;
     
                 case 'leave' :
+
+                    //このコマンドはプレイヤーのみ実行できる
+                    if(!($sender instanceof Player)){
+                        //エラーメッセージの送信
+                        $sender->sendMessage('このコマンドはプレイヤーのみが実行できます');
+                        break;
+                    }
     
                     //プレイヤーのコンフィグ準備
                     $this->player_config = new Config(self::getPlugin()->getDataFolder() . 'players/' . $sender->getName() . '.yml', Config::YAML); 
@@ -154,7 +153,7 @@ class TeamCommand extends Command{
 
                             //完了メッセージ
                             $sender->sendMessage('チーム' . $this->leave_team . 'から抜けました');
-                            $this->getPlugin()->getLogger()->info($sender->getName() . 'がチーム' . $this->current_team . 'から抜けました');
+                            $this->getPlugin()->getLogger()->info($sender->getName() . 'がチーム' . $this->leave_team . 'から抜けました');
                             break;
                         }
                     }
