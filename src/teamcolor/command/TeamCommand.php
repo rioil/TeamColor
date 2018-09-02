@@ -78,7 +78,7 @@ class TeamCommand extends Command{
                     if($this->current_team !== $this->join_team){
 
                         //すでにチームに所属していればそのチームを抜けることを通知
-                        if($this->current_team !== ''){
+                        if($this->current_team != NULL){
 
                             $sender->sendMessage('チーム' . $this->current_team . 'から抜けます');
                             //configに書き込み
@@ -145,7 +145,7 @@ class TeamCommand extends Command{
                             $this->team_config->set('member',$this->team_config->get('member') - 1);
                             $this->team_config->save();
         
-                            $this->player_config->set('team','');
+                            $this->player_config->set('team',NULL);
                             $this->player_config->save();
 
                             //プレイヤーのネームタグを白色にする

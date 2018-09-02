@@ -160,7 +160,7 @@ class Main extends PluginBase implements Listener{
 
             $this->player_team = $player_config->get('team');
 
-            if($this->player_team != ''){
+            if($this->player_team != NULL){
                 $this->team_color = self::getTeamColor($this->player_team);        
                 $player->setNameTag($this->team_color . $player->getName());
                 $player->setNameTagVisible(true);
@@ -188,7 +188,7 @@ class Main extends PluginBase implements Listener{
 
             $this->player_team = $player_config->get('team');
 
-            if($this->player_team != ''){      
+            if($this->player_team != NULL){      
                 //チーム人数をコンフィグに反映
                 $this->team_config = self::getTeamConfig($this->player_team);
                 $this->team_config->set('member',$this->team_config->get('member') - 1);
@@ -224,7 +224,7 @@ class Main extends PluginBase implements Listener{
     //指定したチームのコンフィグを取得
     public static function getTeamConfig(string $teamname) : config{
 
-        if($teamname !== ''){
+        if($teamname != NULL){
 
             switch($teamname){
         
