@@ -106,15 +106,15 @@ class Main extends PluginBase implements Listener{
         $this->getLogger()->info('プラグインは無効になりました');
     }
 
-    //サーバーリロードの検出 TODO:プレイヤーがreloadしたときの処理
+    //サーバーリロードの検出
     public function onCommandEvent(CommandEvent $event){
 
         $this->command = $event->getCommand();
-        $this->getLogger()->info(var_dump($this->command)); #debug
-        if ($this->command === 'reload'){
+
+        if (preg_match('/^(reload)/',$this->command)){
             $this->reload->set('reload',true);
             $this->reload->save();
-            $this->getLogger()->info('リロードを検知(CommandEvent)');
+            $this->getLogger()->info('リロードを検知');
         }
     }    
 
