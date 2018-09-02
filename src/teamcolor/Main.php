@@ -13,8 +13,7 @@ use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\server\ServerCommandEvent;
-use pocketmine\event\server\RemoteServerCommandEvent;
+use pocketmine\event\server\CommandEvent;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerChatEvent;
 
@@ -108,47 +107,16 @@ class Main extends PluginBase implements Listener{
     }
 
     //サーバーリロードの検出 TODO:プレイヤーがreloadしたときの処理
-    public function onServerCommand(ServerCommandEvent $event){
+    public function onCommandEvent(CommandEvent $event){
 
         $this->command = $event->getCommand();
         $this->getLogger()->info(var_dump($this->command)); #debug
-        if ($this->command == 'reload'){
+        if ($this->command === 'reload'){
             $this->reload->set('reload',true);
             $this->reload->save();
-            $this->getLogger()->info('リロードを検知');
+            $this->getLogger()->info('リロードを検知(CommandEvent)');
         }
-    }
-    public function onRemoteServerCommand(RemoteServerCommandEvent $event){
-
-        $this->command = $event->getCommand();
-        $this->getLogger()->info(var_dump($this->command)); #debug
-        if ($this->command == '/reload'){
-            $this->reload->set('reload',true);
-            $this->reload->save();
-            $this->getLogger()->info('リロードを検知');
-        }
-    }
-    public function onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent $event){
-
-        $this->command = $event->getMessage();
-        $this->getLogger()->info(var_dump($this->command)); #debug
-        if ($this->command == '/reload'){
-            $this->reload->set('reload',true);
-            $this->reload->save();
-            $this->getLogger()->info('リロードを検知');
-        }
-    }
-    public function onPlayerChatEvent(PlayerChatEvent $event){
-
-        $this->command = $event->getMessage();
-        $this->getLogger()->info(var_dump($this->command)); #debug
-        if ($this->command == '/reload'){
-            $this->reload->set('reload',true);
-            $this->reload->save();
-            $this->getLogger()->info('リロードを検知');
-        }
-    }
-    
+    }    
 
     //プレイヤーが入ったらconfigの生成
     public function onPlayerJoin(PlayerJoinEvent $event){
