@@ -14,7 +14,7 @@ use teamcolor\Main;
 
 class TeamCommand extends Command{
 
-    /*TODO:変数の型一覧記載 @var */
+    /** TODO:変数の型一覧記載 @var */
     
 
     public function __construct(){

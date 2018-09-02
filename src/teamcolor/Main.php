@@ -17,10 +17,11 @@ use pocketmine\event\server\ServerCommandEvent;
 use pocketmine\event\server\RemoteServerCommandEvent;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerChatEvent;
+
 ##TODO##
 /*
-sendTip()というのとスケジューラーを組み合わせれば画面に現在のチーム情報を表示できるかも
-*/
+ * sendTip()というのとスケジューラーを組み合わせれば画面に現在のチーム情報を表示できるかも
+ */
 
 class Main extends PluginBase implements Listener{
 
