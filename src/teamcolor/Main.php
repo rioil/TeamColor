@@ -106,7 +106,7 @@ class Main extends PluginBase implements Listener{
         $this->getLogger()->info('プラグインは無効になりました');
     }
 
-    //サーバーリロードの検出
+    //サーバーリロードの検出（人数カウントがおかしくなるのを防ぐ）
     public function onCommandEvent(CommandEvent $event){
 
         $this->command = $event->getCommand();
@@ -118,7 +118,7 @@ class Main extends PluginBase implements Listener{
         }
     }    
 
-    //プレイヤーが入ったらconfigの生成
+    //プレイヤーが入ったらコンフィグの生成
     public function onPlayerJoin(PlayerJoinEvent $event){
 
         //プレイヤー情報の取得・コンフィグを準備
@@ -146,13 +146,14 @@ class Main extends PluginBase implements Listener{
         }
     }
 
-    //プレイヤーが鯖から抜けた時チーム人数の変更
+    //プレイヤーが鯖から抜けた時にチーム人数に反映
     public function onPlayerQuit(PlayerQuitEvent $event){
 
+        //抜けたプレイヤー、そのコンフィグを取得
         $player = $event->getPlayer();
         $player_config = self::getPlayerConfig($player);
 
-        //チームの人数に反映
+        //チームに属していた場合
         if($player_config->exists('team')){
 
             $this->player_team = $player_config->get('team');
