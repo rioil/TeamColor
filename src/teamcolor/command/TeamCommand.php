@@ -106,6 +106,8 @@ class TeamCommand extends Command{
                         //完了メッセージ
                         $sender->sendMessage('チーム' . $this->join_team . 'に参加しました');
                         $this->getPlugin()->getLogger()->info($sender->getName() . 'がチーム' . $this->join_team . 'に参加しました');
+                        //TODO:チーム参加メッセージ
+                        Main::sendMessageTeamPlayer($this->join_team,$sender->getName() . 'がチームに参加しました');
                     }
                     else{
                         $sender->sendMessage('§6すでにチーム' . $this->join_team . 'に所属しています');

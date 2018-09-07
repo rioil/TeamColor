@@ -277,20 +277,19 @@ class Main extends PluginBase implements Listener{
         return self::$plugin;
     }
 
-    //TODO 全プレイヤーにメッセージ送信
-    public static function sendMessageAllPlayer(string $world, string $message){
+    //TODO チームプレイヤーにメッセージ送信
+    public static function sendMessageTeamPlayer(string $team, string $message){
 
-        if($world != NULL){
-
-            $level = self::getPlugin()->getServer()->getLevelByName($world);
+        if($team != NULL){
 
             foreach(self::getPlugin()->getServer()->getOnlinePlayers() as $players){
 
-                $players_level = $players->getLevel();
-                $designation = $players_level->getName();
+                $players_config = self::getPlayerConfig($players->getName());
+                $players_team = $players_config->get('team');
 
-                if($designation === $world){
-                    //その限定ワールドにいる人の処理
+                if($players_team === $team){
+                    //メッセージを送信
+                    $players->sendMessage($message);
                 }
             }
         }
